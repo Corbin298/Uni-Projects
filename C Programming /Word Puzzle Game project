@@ -1,4 +1,10 @@
-// This code consists in creating a word search puzzle that allows the player to search find and mark all the 4 hidden words inside a grid of 10x10
+/* This code consists in creating a word search puzzle that allows the player to search find and mark all the 4 hidden words inside a grid of 10x10.
+In this repository, we have implemented a word search puzzle program, where a 10x10 grid with random characters was generated. 
+The player needs to find 4 hidden words in this random character grid, the words can be vertical, horizontal, or diagonal. 
+A word can overleap one or more characters of another word.The program allows the user to enter the rows (numbers) and columns (letters) to uncover the hidden words.
+For example, if the user is going to uncover any words the input Number-letter are required. */
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
