@@ -1,0 +1,242 @@
+// This code consists in creating a word search puzzle that allows the player to search find and mark all the 4 hidden words inside a grid of 10x10
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define ROWS 10
+#define COLUMNS 10
+
+char puzzle[ROWS][COLUMNS];
+
+char allWords[20][10] = {"GIRL" , "BOY" , "SHIP" , "CAT" , "FOG" , "KITE" , "BAG" , "STAMP" , "ZOOM" , "JOY", "CAR" , "BUS" , "VAN" , "BOAT" , "BIKE" , "TURBO" , "SCHOOL" , "COVID" , "VIRUS" , "STAR"};
+
+char fourWords[4][10];
+
+char getRandomCharacter()
+{
+    int r = (rand() % 26) + 65;
+    return (char)r;
+}   
+
+void getFourRandomWords() 
+{
+    int i, j, randomIndex;
+    int usedIndices[20]={0};
+
+    for(i = 0;i < 4;i++){
+    do {
+        randomIndex = rand() %20;
+    } while (usedIndices[randomIndex]== 1);
+        strcpy(fourWords[i],allWords[randomIndex]);
+        usedIndices[randomIndex]=1;
+    }
+}
+
+void createBlankPuzzle()
+{
+    int i , j;
+
+    for(i = 0;i < ROWS;i++)
+    {
+        for(j = 0;j < COLUMNS;j++)
+        {
+            puzzle[i][j] = '*';
+        }
+    }
+}
+
+void fillPuzzleWithRandomLetters()
+{
+    int i, j;
+    for (i = 0; i < ROWS; i++)
+    {
+        for (j = 0; j < COLUMNS; j++)
+        {
+            if (puzzle[i][j] == '*')
+            {
+                puzzle[i][j] = getRandomCharacter();
+            }
+        }
+    }
+}
+
+void displayPuzzel()
+{
+    int i , j , rowNum = 0;
+    char x = 'A';
+   
+    // First display column names
+    printf("Beautiful array: \n  ");
+  
+    for(i = 0;i < COLUMNS;i++)
+    {
+        printf("%c ",x + i);
+    }
+    printf("\n");
+
+    for(i = 0;i < ROWS;i++)
+    {
+        printf("%d ",rowNum);
+        rowNum++;
+        for(j = 0;j < COLUMNS;j++)
+        {
+            printf("%c ",puzzle[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void putHorizzontalWord(char word[10])
+{
+    int rRow, rCol , ok , i;
+
+    do
+    {
+       
+        rRow = rand() % 10;
+        rCol = rand() % 10;
+
+        ok = 1;
+        if(rCol + strlen(word) < 10)
+        {
+            for(i = 0;i < strlen(word);i++)
+            {
+                if(puzzle[rRow][rCol + i] == '*' ||
+                    puzzle[rRow][rCol + i] == word[i])
+                {
+                    puzzle[rRow][rCol + i] = word[i];
+                }
+                else
+                {
+                    ok = 0;
+                }
+            }
+        }
+        else
+        {
+            ok = 0;
+        }
+    }
+    while(ok == 0);
+}
+void putVerticalWord(char word[10])
+{
+    int rRow, rCol, ok, i;
+
+    do
+    {
+        rRow = rand() % 10;
+        rCol = rand() % 10;
+
+        ok = 1;
+        if(rRow + strlen(word) <= ROWS)
+        {
+            for(i = 0; i < strlen(word); i++)
+            {
+                if(puzzle[rRow + i][rCol] == '*' || puzzle[rRow + i][rCol] == word[i])
+                {
+                    puzzle[rRow + i][rCol] = word[i];
+                }
+                else
+                {
+                    ok = 0;
+                }
+            }
+        }
+        else
+        {
+            ok = 0;
+        }
+    } while(ok == 0);
+}
+void putDiagonalWord(char word[10])
+{
+    int rRow, rCol, ok, i;
+
+    do
+    {
+        rRow = rand() % ROWS;
+        rCol = rand() % COLUMNS;
+
+        ok = 1;
+        if(rRow + strlen(word) <= ROWS && rCol + strlen(word) <= COLUMNS)
+        {
+            for(i = 0; i < strlen(word); i++)
+            {
+                if(puzzle[rRow + i][rCol + i] == '*' || puzzle[rRow + i][rCol + i] == word[i])
+                {
+                    puzzle[rRow + i][rCol + i] = word[i];
+                }
+                else
+                {
+                    ok = 0;
+                }
+            }
+        }
+        else
+        {
+            ok = 0;
+        }
+    } while(ok == 0);
+}
+void fillPuzzleWithWords()
+{
+    int i , orientation;
+    getFourRandomWords();
+
+    for(i = 0;i < 4;i++)
+    {
+        orientation = 0; rand() % 3; // To generate a random number from 0, 1, & 2
+        if(orientation == 0)
+        {
+            putHorizzontalWord(fourWords[i]);
+        }
+        else if(orientation == 1)
+        {
+            putVerticalWord(fourWords[i]);
+        }
+        else if(orientation == 2)
+        {
+          putDiagonalWord(fourWords[i]);
+        }
+    }
+} 
+void playGame()
+{
+    displayPuzzel();
+    int i, correctGuesses = 0;
+    char guess[10];
+
+    for(i = 0; i < 4; i++)
+    {
+        printf("Guess the %d word: ", i+1);
+        scanf("%s", guess);
+
+        if(strcmp(guess, fourWords[0]) == 0 || strcmp(guess, fourWords[1]) == 0 || strcmp(guess, fourWords[2]) == 0 || strcmp(guess, fourWords[3]) == 0)
+        {
+            printf("Correct!\n");
+            correctGuesses++;
+        }
+        else
+        {
+            printf("Incorrect. The word was %s.\n", fourWords[i]);
+        }
+    }
+    printf("You found %d out of 4 words.\n", correctGuesses);
+}
+
+int main(void)
+{
+    srand(time(NULL));
+
+    createBlankPuzzle();
+    fillPuzzleWithWords();
+    fillPuzzleWithRandomLetters();
+    playGame();
+    displayPuzzel();
+    
+
+    getchar();
+    return 0;
+}
